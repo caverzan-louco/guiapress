@@ -10,10 +10,10 @@ router.get("/admin/categories/new", (req, res) => {
 
 // Rota para salvar categoria
 router.post("/categories/save", (req, res) => {
-    const title = req.body.title;
+    var title = req.body.title;
     console.log("Título recebido:", title);
 
-    if (title != undefined && title.trim() !== "") {
+    if(title != undefined && title.trim() !== "") {
         Category.create({
             title: title,
             slug: slugify(title)
@@ -42,7 +42,7 @@ router.get("/admin/categories", (req, res) => {
 
 // Rota para deletar uma categoria
 router.post("/categories/delete", (req, res) => {
-    const id = req.body.id;
+    var id = req.body.id;
 
     if (id != undefined && !isNaN(id)) {
         Category.destroy({
@@ -58,5 +58,39 @@ router.post("/categories/delete", (req, res) => {
         res.redirect("/admin/categories");
     }
 });
+
+//localizar dados para editar
+
+router.get("/admin/categories/edit/:id", (req,res) => {
+    var id = req.params.id;
+
+    Category.findByPk(id).then(category => {
+        if(category !=undefined){
+            res.render("admin/categories/edit",{category: category});
+        }else{
+            res.redirect("/admin/categories");
+        }
+    }).catch(erro => {
+        res.redirect("/admin/categories");
+    })
+})
+
+//salvar edição
+router.post("/categories/update", (req,res) => {
+    var id = req.body.id
+    var title = req.body.title;
+
+    Category.update({
+        title: title,
+        slug: slugify(title)
+    },{
+        where: {
+            id: id
+            
+        }
+    }).then(() => {
+        res.redirect("/admin/categories");
+    })
+})
 
 module.exports = router;

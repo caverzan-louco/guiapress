@@ -1,28 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Artigo</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="mb-4">Criar Novo Artigo</h1>
-        <form action="/articles/save" method="POST" class="card p-4 shadow-sm bg-white">
-            <div class="mb-3">
-                <label for="title" class="form-label">Título:</label>
-                <input type="text" id="title" name="title" class="form-control" required>
-            </div>
-            <div class="mb-3">
-                <label for="body" class="form-label">Conteúdo:</label>
-                <textarea id="body" name="body" class="form-control" rows="5" required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </form>
+<%- include ("../../partials/header.ejs") %>
+<%- include ("../../partials/navbar.ejs") %>
+
+<div class="container">
+    <hr>
+    <div class="card">
+        <div class="card-header">
+            <h2>Novo Artigo</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="/articles/save">
+                <input class="form-control" type="text" name="title" placeholder="Título do artigo"><br>
+                <textarea class="form-control" name="body" id="article" placeholder="Escreva o conteúdo aqui!"></textarea><br>
+                
+                <label>Categoria</label>
+                <select name="category" class="form-control">
+                    <% categories.forEach((category) => { %>
+                        <option value="<%= category.id %>"><%= category.title %></option>
+                    <% }) %>
+                </select><br>
+
+                <button class="btn btn-success">Cadastrar</button>
+            </form>
+        </div>
     </div>
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</div>
+
+<%- include ("../../partials/footer.ejs") %>
+
+<script src="/tinymce/tinymce.min.js"></script>
+<script>
+    tinymce.init({
+        selector: "#article",
+        plugins: [
+            'advlist autolink link image lists print preview hr searchreplace wordcount fullscreen insertdatetime media save table paste emoticons'
+        ]
+    });
+</script>
