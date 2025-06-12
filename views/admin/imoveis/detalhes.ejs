@@ -1,0 +1,26 @@
+<%- include("../../partials/header.ejs") %>
+<%- include("../../partials/navbar.ejs") %>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2><%= imoveis.title %></h2>
+        </div>
+        <div class="card-body">
+            <% if (imoveis.imageUrl) { %>
+                <img src="<%= imoveis.imageUrl %>" alt="Imagem do imóvel" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+            <% } %>
+            <p><strong>Categoria:</strong> <%= imoveis.category ? imoveis.category.title : "Sem categoria" %></p>
+            <p><strong>Slug:</strong> <%= imoveis.slug %></p>
+            <hr>
+            <div>
+                <%- imoveis.body %>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="/admin/imoveis" class="btn btn-secondary">Voltar</a>
+        </div>
+    </div>
+</div>
+
+<%- include("../../partials/footer.ejs") %>

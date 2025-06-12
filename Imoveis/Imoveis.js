@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const connection = require("../database/database");
 const Category = require("../categories/Category");
 
-const Article = connection.define("articles", {
+const imoveis = connection.define("imoveis", {
     title: {
         type: Sequelize.STRING,
         allowNull: false
@@ -15,15 +15,19 @@ const Article = connection.define("articles", {
         type: Sequelize.TEXT,
         allowNull: false
     },
+    imageUrl: {                    
+        type: Sequelize.STRING,
+        allowNull: true
+    },
     categoryId: {
         type: Sequelize.INTEGER,
         allowNull: false
     }
 });
 
-Category.hasMany(Article);       // 1 categoria → muitos artigos
-Article.belongsTo(Category);     // 1 artigo → 1 categoria
+Category.hasMany(imoveis);       
+imoveis.belongsTo(Category);     
 
+imoveis.sync({ force: false });
 
-
-module.exports = Article;
+module.exports = imoveis;

@@ -10,10 +10,11 @@ router.get("/admin/categories/new", (req, res) => {
 
 // Rota para salvar categoria
 router.post("/categories/save", (req, res) => {
-    var title = req.body.title;
+    console.log("req.body:", req.body); // 👈 Debug
+    const title = req.body.title;
     console.log("Título recebido:", title);
 
-    if(title != undefined && title.trim() !== "") {
+    if (title && title.trim() !== "") {
         Category.create({
             title: title,
             slug: slugify(title)
@@ -42,9 +43,9 @@ router.get("/admin/categories", (req, res) => {
 
 // Rota para deletar uma categoria
 router.post("/categories/delete", (req, res) => {
-    var id = req.body.id;
+    const id = req.body.id;
 
-    if (id != undefined && !isNaN(id)) {
+    if (id && !isNaN(id)) {
         Category.destroy({
             where: { id: id }
         }).then(() => {
@@ -59,38 +60,39 @@ router.post("/categories/delete", (req, res) => {
     }
 });
 
-//localizar dados para editar
-
-router.get("/admin/categories/edit/:id", (req,res) => {
-    var id = req.params.id;
+// Rota para carregar dados para edição
+router.get("/admin/categories/edit/:id", (req, res) => {
+    const id = req.params.id;
 
     Category.findByPk(id).then(category => {
-        if(category !=undefined){
-            res.render("admin/categories/edit",{category: category});
-        }else{
+        if (category) {
+            res.render("admin/categories/edit", { category: category });
+        } else {
             res.redirect("/admin/categories");
         }
-    }).catch(erro => {
+    }).catch(err => {
+        console.error("Erro ao buscar categoria para edição:", err);
         res.redirect("/admin/categories");
-    })
-})
+    });
+});
 
-//salvar edição
-router.post("/categories/update", (req,res) => {
-    var id = req.body.id
-    var title = req.body.title;
+// Rota para salvar edição
+router.post("/categories/update", (req, res) => {
+    const id = req.body.id;
+    const title = req.body.title;
 
     Category.update({
         title: title,
         slug: slugify(title)
-    },{
-        where: {
-            id: id
-            
-        }
+    }, {
+        where: { id: id }
     }).then(() => {
+        console.log("Categoria atualizada, ID:", id);
         res.redirect("/admin/categories");
-    })
-})
+    }).catch(err => {
+        console.error("Erro ao atualizar categoria:", err);
+        res.redirect("/admin/categories");
+    });
+});
 
 module.exports = router;

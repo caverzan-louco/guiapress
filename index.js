@@ -5,10 +5,10 @@ const connection = require("./database/database");
 const session = require("express-session");
 
 const categoriesController = require("./categories/CategoriesController");
-const articlesController = require("./articles/ArticlesController");
+const imoveisController = require("./imoveis/ImoveisController");
 const usersController = require("./users/UsersController");
 
-const Article = require("./articles/Articles");
+const imoveis = require("./imoveis/Imoveis");
 const Category = require("./categories/Category");
 const User = require("./users/Users");
 
@@ -18,10 +18,12 @@ app.set('view engine', 'ejs');
 // Sessions
 app.use(session({
     secret: "textoaleatorio",
+    resave: false,
+    saveUninitialized: false,
     cookie: { maxAge: 30000 }
-}));
+})); 
 
-// ✅ Torna o usuário logado disponível nas views EJS
+// Torna o usuário logado disponível nas views EJS
 app.use((req, res, next) => {
     res.locals.user = req.session.user || null;
     next();
@@ -34,7 +36,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// ✅ Middleware para carregar categorias nas views
+// Middleware para carregar categorias nas views
 app.use((req, res, next) => {
     Category.findAll()
         .then(categories => {
@@ -60,7 +62,7 @@ connection
 
 // Controllers
 app.use("/", categoriesController);
-app.use("/", articlesController);
+app.use("/", imoveisController);
 app.use("/", usersController);
 
 // Testes de sessão
@@ -85,22 +87,32 @@ app.get("/leitura", (req, res) => {
     });
 });
 
-// Rotas
+// Rota para página inicial mostrando lista de imóveis
 app.get("/", (req, res) => {
-    Article.findAll({
+    imoveis.findAll({
         order: [['id', 'DESC']]
-    }).then(articles => {
-        res.render("index", { articles });
+    }).then(imoveis => {
+        res.render("index", { imoveis });
     });
 });
 
+// Rota para listar todos os imóveis (opcional)
+app.get("/imoveis", (req, res) => {
+    imoveis.findAll({
+        order: [['id', 'DESC']]
+    }).then(imoveis => {
+        res.render("imoveis/index", { imoveis });
+    });
+});
+
+// Rota para detalhes de um imóvel (pela slug)
 app.get("/:slug", (req, res) => {
     const slug = req.params.slug;
-    Article.findOne({
+    imoveis.findOne({
         where: { slug }
-    }).then(article => {
-        if (article) {
-            res.render("article", { article });
+    }).then(imovel => {
+        if (imovel) {
+            res.render("imoveis/detalhes", { imovel });  // <<< CORRETO
         } else {
             res.redirect("/");
         }
@@ -109,14 +121,17 @@ app.get("/:slug", (req, res) => {
     });
 });
 
+
+
+// Rota para listar imóveis por categoria
 app.get("/category/:slug", (req, res) => {
     const slug = req.params.slug;
     Category.findOne({
         where: { slug },
-        include: [{ model: Article }]
+        include: [{ model: imoveis }]
     }).then(category => {
         if (category) {
-            res.render("index", { articles: category.articles });
+            res.render("index", { imoveis: category.imoveis });
         } else {
             res.redirect("/");
         }

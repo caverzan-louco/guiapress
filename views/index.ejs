@@ -1,35 +1,30 @@
 <%- include ("partials/header.ejs") %>
-    <%- include ("partials/navbar.ejs") %>
+<%- include ("partials/navbar.ejs") %>
 
-        <body>
-            <div class="container">
-                <div class="jumbotron">
-                    <h1 class="display-4">Bem vindo!</h1>
-                    <p class="lead">Este é um simples blog de tecnologia
-                        conteúdo ou informação.</p>
-                    <hr class="my-4">
-                    <p>Ele usa classes utilitárias para tipografia e espaçamento de conteúdo, dentro do maior container.
-                    </p>
-                    <a class="btn btn-primary btn-lg" href="#" role="button">Leia mais</a>
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1 class="display-4">Caverzzan`s Imobiliaria<br>Seja Bem Vindo</h1>
+            <p class="lead">Caverzzan`s Imobiliaria.</p>
+            <hr class="my-4">
+            <a class="btn btn-primary btn-lg" href="#" role="button">Leia mais</a>
+        </div>
+
+        <% imoveis.forEach(imoveis => { %>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h2><%= imoveis.title %></h2>
                 </div>
-                <% articles.forEach(article=> { %>
-                    <div class="card">
-                        <div class="card-header">
-                            <h2>
-                                <%= article.title %>
-                            </h2>
-                        </div>
-                        <div class="card-body">
-                            <a href="/<%= article.slug %>" class="btn btn-success">Ler artigos</a>
+                <div class="card-body">
+                    <!-- Exibe a imagem se existir -->
+                    <% if (imoveis.imageUrl) { %>
+                        <img src="<%= imoveis.imageUrl %>" alt="Imagem do imóvel" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+                    <% } %>
 
-                        </div>
-
-                    </div>
-
-                    <% }) %>
+            <a href="/<%= imoveis.slug %>" class="btn btn-success">Ver Mais</a>                </div>
             </div>
+        <% }) %>
+    </div>
 
-
-            <%- include ("partials/footer.ejs") %>
-
-        </body>
+    <%- include ("partials/footer.ejs") %>
+</body>
